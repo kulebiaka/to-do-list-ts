@@ -1,0 +1,49 @@
+.task{
+  display: grid;
+  margin: 10px 0px;
+  padding: 10px;
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+  grid-template-areas: 't d e r';
+  grid-template-columns: 4fr 1fr 1fr 1fr;
+  align-items: center;
+
+  button{
+    width: 70px;
+    height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+
+    transition: background-color linear 0.1s, color linear 0.1s;
+
+    &:active{
+      opacity: 0.8
+    }
+  }
+}
+.text{
+  grid-area: t;
+}
+.date{
+  grid-area: d;
+}
+.edit{
+  grid-area: e;
+  background-color: #2e7d32c4;
+  border: none;
+  &:hover{
+    background-color: #2e7d32;
+  }
+}
+.remove{
+  grid-area: r;
+  color: #d32f2f;
+  background-color: white;
+  border: 1px solid #d32f2f85;
+
+  &:hover{
+    background-color: #d32f2f;
+    color: black;
+  }
+
+}
