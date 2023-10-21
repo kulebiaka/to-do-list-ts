@@ -1,6 +1,7 @@
 .app-container{
-  width: 1200px;
-  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1200px 1fr;
+
   h1{
     text-align: center;
   }

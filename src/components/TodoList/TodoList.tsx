@@ -1,23 +1,27 @@
 import React, { useState, useId } from 'react'
 import Task from '../Task/Task';
 import s from './TodoList.module.scss'
+import { link } from 'fs';
 
 interface Item {
   id: number;
   text: string;
   isDone: boolean;
   isEditing: boolean;
+  isSelected: boolean;
   date: any;
 }
 
 
 const TodoList = () => {
 
-  let initialState: Array<Item> = [{ id: 0, text: 'Your first task', isDone: false, isEditing: false, date: Date.now()}]
+  let initialState: Array<Item> = [{ id: 0, text: 'Your first task', isDone: false, isEditing: false, isSelected: false, date: Date.now() }]
 
   let [input, setInput] = useState('')
   let [taskList, setTaskList] = useState(initialState)
   let [nextId, setNextId] = useState(1);
+  let selectedQuantity = (taskList.reduce((acc, t: Item) => { return t.isSelected ? acc + 1 : acc }, 0))
+  let isSelectedAll = ((taskList.length > 0) && (selectedQuantity === taskList.length))
   console.log(taskList)
 
   function sortTaskList() {
@@ -45,6 +49,20 @@ const TodoList = () => {
     }))
   }
 
+  function changeStatusSelected(id: number) {
+    setTaskList(taskList.map((t) => {
+      if (t.id === id) {
+        return {
+          ...t,
+          isSelected: !t.isSelected
+        }
+      } else {
+        return t
+      }
+    }))
+    sortTaskList()
+  }
+
   function changeStatusDone(id: number) {
     setTaskList(taskList.map((t) => {
       if (t.id === id) {
@@ -57,6 +75,26 @@ const TodoList = () => {
       }
     }))
     sortTaskList()
+  }
+
+  function selectAllTask(e: any) {
+    if (e.target.checked === true) {
+      setTaskList(
+        taskList.map((t: Item) => {
+          return { ...t, isSelected: true }
+        })
+      )
+    } else {
+      setTaskList(
+        taskList.map((t: Item) => {
+          return { ...t, isSelected: false }
+        })
+      )
+    }
+  }
+
+  function removeAllSelectedTask() {
+    setTaskList(taskList.filter(t => !t.isSelected))
   }
 
   function editTaskText(id: number, text: string) {
@@ -81,15 +119,8 @@ const TodoList = () => {
       taskList.filter((t: Item) => (t.id != id))
     )
   }
-  function onAddTaskKeypress(e: any) {
-    // if(e.keyCode === 13) {  
-    //   onAddTaskClick()
-    //   console.log(input)
-    //   setInput('')
-    //   console.log(input)
 
-    // }
-  }
+
   function onAddTaskClick() {
     debugger;
     let newTask: Item = {
@@ -97,6 +128,7 @@ const TodoList = () => {
       text: input,
       isDone: false,
       isEditing: false,
+      isSelected: false,
       date: Date.now()
     }
     setNextId(nextId + 1)
@@ -106,31 +138,33 @@ const TodoList = () => {
   }
 
   return (
-    <div>
+    <div className={s.container}>
       <h1>ToDo List</h1>
       <div className={s.form}>
-        <textarea className={s.add_input} placeholder='Write some text' value={input} onKeyDown={onAddTaskKeypress} onChange={onInputChange} />
+        <textarea className={s.add_input} placeholder='Write some text' value={input} onChange={onInputChange} />
         <button className={s.add_btn} onClick={onAddTaskClick}>Add</button>
       </div>
+
       <h2>List of Tasks</h2>
-      {/* <div>
+
+      <div className={s.list_head}>
         <div>
-          <input type="checkbox" className={s.checkbox_all} />
+          <input type="checkbox" className={s.checkbox_all} checked={isSelectedAll} onClick={selectAllTask} />
           <span>All</span>
         </div>
-        <div>
-          <select name="" id=""></select>
-          <select name="" id=""></select>
-        </div>
-      </div> */}
+        <button onClick={removeAllSelectedTask}>{`Remove(${selectedQuantity})`}</button>
+      </div>
+
       <div>
         {taskList.map((t: Item) => (<Task key={t.id} id={t.id} text={t.text}
           task={t} removeTask={removeTask} sortTaskList={sortTaskList} setTaskList={setTaskList}
           changeStatusEdit={changeStatusEdit} editTaskText={editTaskText}
+          changeStatusSelected={changeStatusSelected}
           changeStatusDone={changeStatusDone}
         />))}
       </div>
-    </div>
+
+    </div >
   )
 }
 

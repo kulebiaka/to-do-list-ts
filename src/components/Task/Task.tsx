@@ -12,6 +12,10 @@ const Task = (props: any) => {
     props.editTaskText(props.id, e.target.value)
   }
 
+  function changeStatusSelected() {
+    props.changeStatusSelected(props.id)
+  }
+
   function changeStatusDone() {
     props.changeStatusDone(props.id)
   }
@@ -21,12 +25,12 @@ const Task = (props: any) => {
       {task.isEditing ?
         (<textarea value={task.text} onChange={editTaskText} />) :
         (<>
-          <input type='checkbox' id={'task' + ':' + task.id} className={s.checkbox} checked={task.isDone} onClick={changeStatusDone} />
-          <div className={s.text} style={{ textDecoration: task.isDone ? 'line-through' : 'none' }}>{task.text || `task:${task.id}`}</div>
+          <input type='checkbox' id={'task' + ':' + task.id} className={s.checkbox} checked={task.isSelected} onClick={changeStatusSelected} />
+          <div className={s.text} style={{ textDecoration: task.isDone ? 'line-through 2px' : 'none' }}>{task.text || `task:${task.id}`}</div>
         </>)}
 
       <div className={s.btns}>
-        {task.isEditing ? (<button className={s.edit} onClick={changeStatusEdit}>Save</button>) : (<button className={s.edit} onClick={changeStatusEdit}>Edit</button>)}
+        {task.isEditing ? (<button className={s.edit} onClick={changeStatusEdit}>Save</button>) : (<><button className={s.edit} onClick={changeStatusEdit}>Edit</button> <button onClick={changeStatusDone}>Done</button></>)}
         <button className={s.remove} onClick={() => { props.removeTask(task.id) }}>Remove</button>
       </div>
     </div>
