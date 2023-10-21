@@ -1,58 +1,34 @@
-import React, { useState } from 'react'
+import React from 'react'
 import s from './Task.module.scss'
 
-// let taskDependOnStatus = {
-//   'pending': (<div className={s.task}>
-//       <div className={s.text}>{props.text}</div>
-//       <div>Date</div>
-//       <button className={s.edit} onClick={() => (props.changeStatusEdit(props.id))}>Edit</button>
-//       <button className={s.remove} onClick={()=>{props.removeTask(props.id)}}>Remove</button>
-//   </div>),
-//   'done': (<div className={s.task}>
-//     <div className={s.text}>{props.text}</div>
-//     <div>Date</div>
-//     <button className={s.edit} onClick={() => (props.changeStatusEdit(props.id))}>Edit</button>
-//     <button className={s.remove} onClick={()=>{props.removeTask(props.id)}}>Remove</button>
-//   </div>),
-//   'editing':(<div className={s.task}>
-//     <div className={s.text}>{props.text}</div>
-//     <div>Date</div>
-//     <button className={s.edit} onClick={() => (props.changeStatusEdit(props.id))}>Edit</button>
-//     <button className={s.remove} onClick={()=>{props.removeTask(props.id)}}>Remove</button>
-//   </div>)
-// }
-
 const Task = (props: any) => {
+  let task = props.task
 
-  let [task, setTask] = useState(props.task)
-
-  function changeStatusEdit(){
-    setTask({
-      ...task,
-      status: 'editing'
-    })
+  function changeStatusEdit() {
+    props.changeStatusEdit(props.id)
   }
 
-  function changeStatusPending(){
-    setTask({
-      ...task,
-      status: 'pending'
-    })
+  function editTaskText(e: any) {
+    props.editTaskText(props.id, e.target.value)
   }
 
-  function editTaskText(e: any){
-    setTask({
-      ...task,
-      text: e.target.value
-    })
+  function changeStatusDone() {
+    props.changeStatusDone(props.id)
   }
 
   return (
-    <div className={s.task}>
-      {task.status == 'editing' ? (<input value={task.text} onChange={editTaskText}/>) : (<div className={s.text}>{task.text}</div>)}
-      <div>Date</div>
-      {task.status == 'editing' ? (<button className={s.edit} onClick={changeStatusPending}>Save</button>) : (<button className={s.edit} onClick={changeStatusEdit}>Edit</button>)}
-      <button className={s.remove} onClick={()=>{props.removeTask(task.id)}}>Remove</button>
+    <div className={s.task} id={task.id}>
+      {task.isEditing ?
+        (<textarea value={task.text} onChange={editTaskText} />) :
+        (<>
+          <input type='checkbox' id={'task' + ':' + task.id} className={s.checkbox} checked={task.isDone} onClick={changeStatusDone} />
+          <div className={s.text} style={{ textDecoration: task.isDone ? 'line-through' : 'none' }}>{task.text || `task:${task.id}`}</div>
+        </>)}
+
+      <div className={s.btns}>
+        {task.isEditing ? (<button className={s.edit} onClick={changeStatusEdit}>Save</button>) : (<button className={s.edit} onClick={changeStatusEdit}>Edit</button>)}
+        <button className={s.remove} onClick={() => { props.removeTask(task.id) }}>Remove</button>
+      </div>
     </div>
   )
 }
