@@ -30,8 +30,8 @@ const Task = (props: any) => {
         </>)}
 
       <div className={s.btns}>
-        {task.isEditing ? (<button className={s.edit} onClick={changeStatusEdit}>Save</button>) : (<><button className={s.edit} onClick={changeStatusEdit}>Edit</button> <button onClick={changeStatusDone}>Done</button></>)}
-        <button className={s.remove} onClick={() => { props.removeTask(task.id) }}>Remove</button>
+        {task.isEditing ? (<button className={s.save} onClick={changeStatusEdit}></button>) : (<><button className={s.edit} onClick={changeStatusEdit}></button> <button className={s.done} onClick={changeStatusDone}></button></>)}
+        <button className={s.remove} onClick={() => { props.removeTask(task.id) }}></button>
       </div>
     </div>
   )

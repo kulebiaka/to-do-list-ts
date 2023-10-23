@@ -4,9 +4,9 @@ import s from './Sidebar.module.scss'
 const Sidebar = () => {
   return (
     <div>
-      <div>All</div>
-      <div></div>
-      <div>all</div>
+      <a href='#'>All</a>
+      <a href='#'>Finished</a>
+      <a href='#'>Unfinished</a>
     </div>
   )
 }

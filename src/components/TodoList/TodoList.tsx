@@ -9,30 +9,37 @@ interface Item {
   isDone: boolean;
   isEditing: boolean;
   isSelected: boolean;
+  isShown: boolean
   date: any;
 }
 
+type tags = 'all' | 'finished' | 'unfinished'
 
 const TodoList = () => {
 
-  let initialState: Array<Item> = [{ id: 0, text: 'Your first task', isDone: false, isEditing: false, isSelected: false, date: Date.now() }]
+  let initialState: Array<Item> = [{ id: 0, text: 'Your first task', isDone: false, isEditing: false, isSelected: false, isShown: true, date: Date.now() }]
 
   let [input, setInput] = useState('')
+  // let [deadline, setDeadline] = useState(Date.now)
+  let [tag, setTag] = useState('all')
   let [taskList, setTaskList] = useState(initialState)
+  let shownTaskList = taskList.filter((t:Item) => t.isShown)
   let [nextId, setNextId] = useState(1);
-  let selectedQuantity = (taskList.reduce((acc, t: Item) => { return t.isSelected ? acc + 1 : acc }, 0))
-  let isSelectedAll = ((taskList.length > 0) && (selectedQuantity === taskList.length))
+  let selectedQuantity = (shownTaskList.reduce((acc, t: Item) => { return t.isSelected ? acc + 1 : acc }, 0))
+  let isSelectedAll = ((shownTaskList.length > 0) && (selectedQuantity === shownTaskList.length))
   console.log(taskList)
 
-  function sortTaskList() {
-    setTaskList(taskList => [...taskList].sort((a, b) => {
-      if (a.isDone > b.isDone) {
-        return 1
-      } else if (a.isDone < b.isDone) {
-        return -1;
-      }
-      return b.date - a.date
-    }))
+  function defaultSort(a: Item, b:Item){
+    if (a.isDone > b.isDone) {
+      return 1
+    } else if (a.isDone < b.isDone) {
+      return -1;
+    }
+    return b.date - a.date
+  }
+
+  function sortTaskList(funcForSort = defaultSort) {
+    setTaskList(taskList => [...taskList].sort(funcForSort))
     console.log(taskList)
   }
 
@@ -129,6 +136,7 @@ const TodoList = () => {
       isDone: false,
       isEditing: false,
       isSelected: false,
+      isShown: true,
       date: Date.now()
     }
     setNextId(nextId + 1)
@@ -142,6 +150,7 @@ const TodoList = () => {
       <h1>ToDo List</h1>
       <div className={s.form}>
         <textarea className={s.add_input} placeholder='Write some text' value={input} onChange={onInputChange} />
+        {/* <input type="datetime-local" /> */}
         <button className={s.add_btn} onClick={onAddTaskClick}>Add</button>
       </div>
 
@@ -156,7 +165,7 @@ const TodoList = () => {
       </div>
 
       <div>
-        {taskList.map((t: Item) => (<Task key={t.id} id={t.id} text={t.text}
+        {shownTaskList.map((t: Item) => (<Task key={t.id} id={t.id} text={t.text}
           task={t} removeTask={removeTask} sortTaskList={sortTaskList} setTaskList={setTaskList}
           changeStatusEdit={changeStatusEdit} editTaskText={editTaskText}
           changeStatusSelected={changeStatusSelected}
