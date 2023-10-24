@@ -1,4 +1,4 @@
-import React, { useState, useId } from 'react'
+import React, { useState, useId, useEffect } from 'react'
 import Task from '../Task/Task';
 import s from './TodoList.module.scss'
 import { link } from 'fs';
@@ -13,21 +13,48 @@ interface Item {
   date: any;
 }
 
-type tags = 'all' | 'finished' | 'unfinished'
 
 const TodoList = () => {
 
-  let initialState: Array<Item> = [{ id: 0, text: 'Your first task', isDone: false, isEditing: false, isSelected: false, isShown: true, date: Date.now() }]
+  let savedInitialState = localStorage.getItem("taskList") || JSON.stringify([{ id: 0, text: 'Your first task', isDone: false, isEditing: false, isSelected: false, isShown: true, date: Date.now() }])
+  let initialState: Array<Item> = JSON.parse(savedInitialState)
 
   let [input, setInput] = useState('')
-  // let [deadline, setDeadline] = useState(Date.now)
-  let [tag, setTag] = useState('all')
   let [taskList, setTaskList] = useState(initialState)
-  let shownTaskList = taskList.filter((t:Item) => t.isShown)
-  let [nextId, setNextId] = useState(1);
-  let selectedQuantity = (shownTaskList.reduce((acc, t: Item) => { return t.isSelected ? acc + 1 : acc }, 0))
+  let [filter, setFilter] = useState('all')
+  let [shownTaskList, setShownTaskList] = useState(taskList.filter((t:Item) => {
+    // if(filter === 'finished'){
+    //   return (t.isDone === true)
+    // }else if(filter === 'unfinished'){
+    //   return (t.isDone === false)
+    // }else{
+    //   return t;
+    // }
+    return t.isShown
+  }))
+
+  useEffect(() => {
+    setShownTaskList(taskList.filter((t:Item) => t.isShown))
+  }, [taskList])
+  useEffect(() => {
+    if(filter === 'finished'){
+      setTaskList(taskList.map((t:Item) => { return t.isDone ? {...t, isShown: true } : {...t, isShown: false}}))
+    }else if(filter === 'unfinished'){
+      setTaskList(taskList.map((t:Item) => { return !t.isDone ? {...t, isShown: true } : {...t, isShown: false}}))
+    }else{
+      setTaskList(taskList.map((t:Item) => { return {...t, isShown: true}}))
+    }
+  },[filter])
+  useEffect(() => {
+
+  })
+
+  let selectedQuantity = (taskList.reduce((acc, t: Item) => { return t.isSelected ? acc + 1 : acc }, 0))
   let isSelectedAll = ((shownTaskList.length > 0) && (selectedQuantity === shownTaskList.length))
+
   console.log(taskList)
+  // localStorage.clear()
+  localStorage.setItem("taskList", JSON.stringify(taskList))
 
   function defaultSort(a: Item, b:Item){
     if (a.isDone > b.isDone) {
@@ -35,12 +62,54 @@ const TodoList = () => {
     } else if (a.isDone < b.isDone) {
       return -1;
     }
-    return b.date - a.date
+    return b.id - a.id
   }
 
   function sortTaskList(funcForSort = defaultSort) {
     setTaskList(taskList => [...taskList].sort(funcForSort))
-    console.log(taskList)
+  }
+
+  function onAddTaskClick() {
+    debugger;
+    let dateNow = new Date();
+    let date = `${dateNow.getDate()}.${dateNow.getMonth()+1}.${dateNow.getFullYear()} ${dateNow.getHours()}:${(dateNow.getMinutes() / 10 < 1 )? '0' + dateNow.getMinutes().toString() : dateNow.getMinutes() }`;
+    let newTask: Item = {
+      id: Date.now(),
+      text: input,
+      isDone: false,
+      isEditing: false,
+      isSelected: false,
+      isShown: true,
+      date: date
+    }
+    setTaskList(taskList => [newTask, ...taskList])
+    setInput('')
+    sortTaskList();
+  }
+  
+  function selectAllTask(e: any) {
+    if (e.target.checked === true) {
+      setTaskList(
+        taskList.map((t: Item) => {
+          return { ...t, isSelected: true && t.isShown}
+        })
+      )
+    } else {
+      setTaskList(
+        taskList.map((t: Item) => {
+          return { ...t, isSelected: false }
+        })
+      )
+    }
+  }
+
+  function updateFilter(e:any){
+    setFilter(e.target.value)
+    console.log(e.target.value)
+  }
+
+  function removeAllSelectedTask() {
+    setTaskList(taskList.filter(t => !t.isSelected))
   }
 
   function changeStatusEdit(id: number) {
@@ -67,7 +136,6 @@ const TodoList = () => {
         return t
       }
     }))
-    sortTaskList()
   }
 
   function changeStatusDone(id: number) {
@@ -82,26 +150,6 @@ const TodoList = () => {
       }
     }))
     sortTaskList()
-  }
-
-  function selectAllTask(e: any) {
-    if (e.target.checked === true) {
-      setTaskList(
-        taskList.map((t: Item) => {
-          return { ...t, isSelected: true }
-        })
-      )
-    } else {
-      setTaskList(
-        taskList.map((t: Item) => {
-          return { ...t, isSelected: false }
-        })
-      )
-    }
-  }
-
-  function removeAllSelectedTask() {
-    setTaskList(taskList.filter(t => !t.isSelected))
   }
 
   function editTaskText(id: number, text: string) {
@@ -128,22 +176,6 @@ const TodoList = () => {
   }
 
 
-  function onAddTaskClick() {
-    debugger;
-    let newTask: Item = {
-      id: nextId,
-      text: input,
-      isDone: false,
-      isEditing: false,
-      isSelected: false,
-      isShown: true,
-      date: Date.now()
-    }
-    setNextId(nextId + 1)
-    setTaskList(taskList => [newTask, ...taskList])
-    setInput('')
-    sortTaskList();
-  }
 
   return (
     <div className={s.container}>
@@ -161,7 +193,12 @@ const TodoList = () => {
           <input type="checkbox" className={s.checkbox_all} checked={isSelectedAll} onClick={selectAllTask} />
           <span>All</span>
         </div>
-        <button onClick={removeAllSelectedTask}>{`Remove(${selectedQuantity})`}</button>
+        <select name="" id = "" value={filter} onChange={updateFilter}>
+          <option value="all">All</option>
+          <option value="finished">Finished</option>
+          <option value="unfinished">Unfinished</option>
+        </select>
+        <button onClick={removeAllSelectedTask} className={s.remove}>{`Remove(${selectedQuantity})`}</button>
       </div>
 
       <div>

@@ -4,8 +4,8 @@
   padding: 10px;
   border: 1px solid #e2e2e2;
   border-radius: 10px;
-  grid-template-areas: 'c t b';
-  grid-template-columns: 20px 4fr 1fr ;
+  grid-template-areas: 'c t d b';
+  grid-template-columns: 20px 4fr 1fr 1fr ;
   align-items: center;
 
   button{

@@ -27,6 +27,7 @@ const Task = (props: any) => {
         (<>
           <input type='checkbox' id={'task' + ':' + task.id} className={s.checkbox} checked={task.isSelected} onClick={changeStatusSelected} />
           <div className={s.text} style={{ textDecoration: task.isDone ? 'line-through 2px' : 'none' }}>{task.text || `task:${task.id}`}</div>
+          <div className={s.date}>{task.date}</div>
         </>)}
 
       <div className={s.btns}>

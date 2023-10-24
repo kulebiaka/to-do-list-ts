@@ -6,9 +6,18 @@ button{
   // min-width: 70px;
   height: 30px;
   border-radius: 6px;
+  border: none;
   cursor: pointer;
 
   transition: background-color linear 0.1s, color linear 0.1s;
+}
+textarea{
+  padding: 5px;
+  min-width: 800px;
+  max-width: 800px;
+  font-size: 14px;
+  border-radius: 5px; 
+  word-wrap: break-word;
 }
 .form{
   display: flex;
@@ -21,14 +30,6 @@ button{
   align-items: center;
   margin: 10px 10px;
 }
-textarea{
-  padding: 5px;
-  min-width: 800px;
-  max-width: 800px;
-  font-size: 14px;
-  border-radius: 5px; 
-  word-wrap: break-word;
-}
 .add_btn{
   margin-left: 10px;
   border: none;
@@ -38,5 +39,13 @@ textarea{
   &:hover{
     background-color: #ffc107;
     color: white;
+  }
+}
+.remove{
+  color: #ff0707;
+  background-color: white;
+  &:hover{
+    background-color: #ff0707;
+    color: black;
   }
 }
