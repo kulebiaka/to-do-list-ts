@@ -38,9 +38,9 @@ const TodoList = () => {
   }, [taskList])
   useEffect(() => {
     if(filter === 'finished'){
-      setTaskList(taskList.map((t:Item) => { return t.isDone ? {...t, isShown: true } : {...t, isShown: false}}))
+      setTaskList(taskList.map((t:Item) => { return t.isDone ? {...t, isShown: true } : {...t, isShown: false, isSelected: false}}))
     }else if(filter === 'unfinished'){
-      setTaskList(taskList.map((t:Item) => { return !t.isDone ? {...t, isShown: true } : {...t, isShown: false}}))
+      setTaskList(taskList.map((t:Item) => { return !t.isDone ? {...t, isShown: true } : {...t, isShown: false, isSelected: false}}))
     }else{
       setTaskList(taskList.map((t:Item) => { return {...t, isShown: true}}))
     }
