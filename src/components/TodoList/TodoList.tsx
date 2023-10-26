@@ -22,7 +22,7 @@ const TodoList = () => {
   let [input, setInput] = useState('')
   let [taskList, setTaskList] = useState(initialState)
   let [filter, setFilter] = useState('all')
-  let [shownTaskList, setShownTaskList] = useState(taskList.filter((t:Item) => t.isShown))
+  let [shownTaskList, setShownTaskList] = useState(taskList.filter((t:Item) => t.isShown}))
 
   localStorage.setItem("taskList", JSON.stringify(taskList))
 
@@ -40,7 +40,7 @@ const TodoList = () => {
   },[filter, changeStatusDone, onAddTaskClick])
 
 
-  let selectedQuantity = (taskList.reduce((acc, t: Item) => { return t.isSelected ? acc + 1 : acc }, 0))
+  let selectedQuantity = (taskList.reduce((acc: number, t: Item) => { return t.isSelected ? acc + 1 : acc }, 0))
   let isSelectedAll = ((shownTaskList.length > 0) && (selectedQuantity === shownTaskList.length))
 
   
@@ -202,3 +202,22 @@ const TodoList = () => {
 }
 
 export default TodoList;
+
+function setShownTaskList(arg0: any) {
+  throw new Error('Function not implemented.');
+}
+
+
+function setTaskList(arg0: any) {
+  throw new Error('Function not implemented.');
+}
+
+
+function setInput(arg0: string) {
+  throw new Error('Function not implemented.');
+}
+
+
+function setFilter(value: any) {
+  throw new Error('Function not implemented.');
+}
