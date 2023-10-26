@@ -16,22 +16,15 @@ interface Item {
 
 const TodoList = () => {
 
-  let savedInitialState = localStorage.getItem("taskList") || JSON.stringify([{ id: 0, text: 'Your first task', isDone: false, isEditing: false, isSelected: false, isShown: true, date: Date.now() }])
+  let savedInitialState = localStorage.getItem("taskList") || JSON.stringify([{ id: 0, text: 'Your first task', isDone: false, isEditing: false, isSelected: false, isShown: true, date: '' }])
   let initialState: Array<Item> = JSON.parse(savedInitialState)
 
   let [input, setInput] = useState('')
   let [taskList, setTaskList] = useState(initialState)
   let [filter, setFilter] = useState('all')
-  let [shownTaskList, setShownTaskList] = useState(taskList.filter((t:Item) => {
-    // if(filter === 'finished'){
-    //   return (t.isDone === true)
-    // }else if(filter === 'unfinished'){
-    //   return (t.isDone === false)
-    // }else{
-    //   return t;
-    // }
-    return t.isShown
-  }))
+  let [shownTaskList, setShownTaskList] = useState(taskList.filter((t:Item) => t.isShown))
+
+  localStorage.setItem("taskList", JSON.stringify(taskList))
 
   useEffect(() => {
     setShownTaskList(taskList.filter((t:Item) => t.isShown))
@@ -44,18 +37,13 @@ const TodoList = () => {
     }else{
       setTaskList(taskList.map((t:Item) => { return {...t, isShown: true}}))
     }
-  },[filter])
-  useEffect(() => {
+  },[filter, changeStatusDone, onAddTaskClick])
 
-  })
 
   let selectedQuantity = (taskList.reduce((acc, t: Item) => { return t.isSelected ? acc + 1 : acc }, 0))
   let isSelectedAll = ((shownTaskList.length > 0) && (selectedQuantity === shownTaskList.length))
 
-  console.log(taskList)
-  // localStorage.clear()
-  localStorage.setItem("taskList", JSON.stringify(taskList))
-
+  
   function defaultSort(a: Item, b:Item){
     if (a.isDone > b.isDone) {
       return 1
@@ -70,7 +58,6 @@ const TodoList = () => {
   }
 
   function onAddTaskClick() {
-    debugger;
     let dateNow = new Date();
     let date = `${dateNow.getDate()}.${dateNow.getMonth()+1}.${dateNow.getFullYear()} ${dateNow.getHours()}:${(dateNow.getMinutes() / 10 < 1 )? '0' + dateNow.getMinutes().toString() : dateNow.getMinutes() }`;
     let newTask: Item = {
@@ -120,7 +107,10 @@ const TodoList = () => {
           isEditing: !t.isEditing
         }
       } else {
-        return t
+        return {
+          ...t,
+          isEditing: false
+        }
       }
     }))
   }
@@ -182,15 +172,12 @@ const TodoList = () => {
       <h1>ToDo List</h1>
       <div className={s.form}>
         <textarea className={s.add_input} placeholder='Write some text' value={input} onChange={onInputChange} />
-        {/* <input type="datetime-local" /> */}
         <button className={s.add_btn} onClick={onAddTaskClick}>Add</button>
       </div>
 
-      <h2>List of Tasks</h2>
-
       <div className={s.list_head}>
         <div>
-          <input type="checkbox" className={s.checkbox_all} checked={isSelectedAll} onClick={selectAllTask} />
+          <input type="checkbox" className={s.checkbox_all} checked={isSelectedAll} onChange={selectAllTask} />
           <span>All</span>
         </div>
         <select name="" id = "" value={filter} onChange={updateFilter}>
@@ -198,11 +185,11 @@ const TodoList = () => {
           <option value="finished">Finished</option>
           <option value="unfinished">Unfinished</option>
         </select>
-        <button onClick={removeAllSelectedTask} className={s.remove}>{`Remove(${selectedQuantity})`}</button>
+        <button onClick={removeAllSelectedTask} className={s.remove}>{`Remove (${selectedQuantity})`}</button>
       </div>
 
       <div>
-        {shownTaskList.map((t: Item) => (<Task key={t.id} id={t.id} text={t.text}
+        {shownTaskList.map((t: Item, n: number) => (<Task key={n} id={t.id} text={t.text}
           task={t} removeTask={removeTask} sortTaskList={sortTaskList} setTaskList={setTaskList}
           changeStatusEdit={changeStatusEdit} editTaskText={editTaskText}
           changeStatusSelected={changeStatusSelected}

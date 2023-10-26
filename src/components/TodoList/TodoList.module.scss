@@ -13,22 +13,18 @@ button{
 }
 textarea{
   padding: 5px;
-  min-width: 800px;
-  max-width: 800px;
+  height: 20px;
+  min-width: 1090px;
+  max-width: 1090px;
   font-size: 14px;
   border-radius: 5px; 
   word-wrap: break-word;
 }
+
 .form{
   display: flex;
   align-items: center;
   margin: auto;
-}
-.list_head{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 10px 10px;
 }
 .add_btn{
   margin-left: 10px;
@@ -40,6 +36,12 @@ textarea{
     background-color: #ffc107;
     color: white;
   }
+}
+.list_head{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 30px 10px 10px;
 }
 .remove{
   color: #ff0707;

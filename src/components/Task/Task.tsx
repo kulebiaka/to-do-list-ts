@@ -23,10 +23,10 @@ const Task = (props: any) => {
   return (
     <div className={s.task} id={task.id}>
       {task.isEditing ?
-        (<textarea value={task.text} onChange={editTaskText} />) :
+        (<textarea value={task.text} onChange={editTaskText} style={{maxWidth: '1000px', minWidth: '1000px'}}/>) :
         (<>
-          <input type='checkbox' id={'task' + ':' + task.id} className={s.checkbox} checked={task.isSelected} onClick={changeStatusSelected} />
-          <div className={s.text} style={{ textDecoration: task.isDone ? 'line-through 2px' : 'none' }}>{task.text || `task:${task.id}`}</div>
+          <input type='checkbox' id={'task' + ':' + task.id} className={s.checkbox} checked={task.isSelected} onChange={changeStatusSelected} />
+          <div className={s.text} style={{ textDecoration: task.isDone ? 'line-through 2px' : 'none' }}>{task.text || `some text`}</div>
           <div className={s.date}>{task.date}</div>
         </>)}
 
