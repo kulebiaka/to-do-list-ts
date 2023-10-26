@@ -1,7 +1,6 @@
 import React, { useState, useId, useEffect } from 'react'
 import Task from '../Task/Task';
 import s from './TodoList.module.scss'
-import { link } from 'fs';
 
 interface Item {
   id: number;
@@ -10,7 +9,7 @@ interface Item {
   isEditing: boolean;
   isSelected: boolean;
   isShown: boolean
-  date: any;
+  date: string;
 }
 
 
@@ -22,14 +21,19 @@ const TodoList = () => {
   let [input, setInput] = useState('')
   let [taskList, setTaskList] = useState(initialState)
   let [filter, setFilter] = useState('all')
-  let [shownTaskList, setShownTaskList] = useState(taskList.filter((t:Item) => t.isShown}))
+  let [shownTaskList, setShownTaskList] = useState(taskList.map((t:Item) => t))
 
   localStorage.setItem("taskList", JSON.stringify(taskList))
 
   useEffect(() => {
     setShownTaskList(taskList.filter((t:Item) => t.isShown))
   }, [taskList])
-  useEffect(() => {
+  useEffect(updateTaskListByFilter, [filter])
+
+  let selectedQuantity = (taskList.reduce((acc: number, t: Item) => { return t.isSelected ? acc + 1 : acc }, 0))
+  let isSelectedAll = ((shownTaskList.length > 0) && (selectedQuantity === shownTaskList.length))
+
+  function updateTaskListByFilter(){
     if(filter === 'finished'){
       setTaskList(taskList.map((t:Item) => { return t.isDone ? {...t, isShown: true } : {...t, isShown: false, isSelected: false}}))
     }else if(filter === 'unfinished'){
@@ -37,12 +41,7 @@ const TodoList = () => {
     }else{
       setTaskList(taskList.map((t:Item) => { return {...t, isShown: true}}))
     }
-  },[filter, changeStatusDone, onAddTaskClick])
-
-
-  let selectedQuantity = (taskList.reduce((acc: number, t: Item) => { return t.isSelected ? acc + 1 : acc }, 0))
-  let isSelectedAll = ((shownTaskList.length > 0) && (selectedQuantity === shownTaskList.length))
-
+  }
   
   function defaultSort(a: Item, b:Item){
     if (a.isDone > b.isDone) {
@@ -66,7 +65,7 @@ const TodoList = () => {
       isDone: false,
       isEditing: false,
       isSelected: false,
-      isShown: true,
+      isShown: filter === 'finished' ? false : true,
       date: date
     }
     setTaskList(taskList => [newTask, ...taskList])
@@ -133,7 +132,7 @@ const TodoList = () => {
       if (t.id === id) {
         return {
           ...t,
-          isDone: !t.isDone
+          isDone: !t.isDone,
         }
       } else {
         return t
@@ -193,7 +192,7 @@ const TodoList = () => {
           task={t} removeTask={removeTask} sortTaskList={sortTaskList} setTaskList={setTaskList}
           changeStatusEdit={changeStatusEdit} editTaskText={editTaskText}
           changeStatusSelected={changeStatusSelected}
-          changeStatusDone={changeStatusDone}
+          changeStatusDone={changeStatusDone} 
         />))}
       </div>
 
@@ -203,21 +202,3 @@ const TodoList = () => {
 
 export default TodoList;
 
-function setShownTaskList(arg0: any) {
-  throw new Error('Function not implemented.');
-}
-
-
-function setTaskList(arg0: any) {
-  throw new Error('Function not implemented.');
-}
-
-
-function setInput(arg0: string) {
-  throw new Error('Function not implemented.');
-}
-
-
-function setFilter(value: any) {
-  throw new Error('Function not implemented.');
-}
