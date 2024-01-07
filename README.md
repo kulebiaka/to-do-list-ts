@@ -1,3 +1,5 @@
+Pictures of application in [pictures](https://github.com/kulebiaka/to-do-list-ts/tree/master/pictures)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
