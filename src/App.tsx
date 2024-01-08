@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-// import Task from './components/Task/Task'
+import React from 'react';
 import TodoList from './components/TodoList/TodoList';
-// import Sidebar from './components/Sidebar/Sidebar'
 import './App.scss';
 
 

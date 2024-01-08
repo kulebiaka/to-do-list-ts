@@ -12,15 +12,14 @@ interface Item {
   date: string;
 }
 
-
 const TodoList = () => {
 
   let savedInitialState = localStorage.getItem("taskList") || JSON.stringify([{ id: 0, text: 'Your first task', isDone: false, isEditing: false, isSelected: false, isShown: true, date: '' }])
   let initialState: Array<Item> = JSON.parse(savedInitialState)
 
-  let [input, setInput] = useState('')
-  let [taskList, setTaskList] = useState(initialState)
-  let [filter, setFilter] = useState('all')
+  let [input, setInput] = useState<string>('')
+  let [taskList, setTaskList] = useState<Array<Item>>(initialState)
+  let [filter, setFilter] = useState<string>('all')
   let [shownTaskList, setShownTaskList] = useState(taskList.map((t:Item) => t))
 
   localStorage.setItem("taskList", JSON.stringify(taskList))
@@ -89,7 +88,7 @@ const TodoList = () => {
     }
   }
 
-  function updateFilter(e:any){
+  function updateFilter(e: React.ChangeEvent<HTMLSelectElement>){
     setFilter(e.target.value)
     console.log(e.target.value)
   }
@@ -154,7 +153,7 @@ const TodoList = () => {
     }))
   }
 
-  function onInputChange(e: any) {
+  function onInputChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setInput(e.target.value)
   }
 
@@ -179,7 +178,7 @@ const TodoList = () => {
           <input type="checkbox" className={s.checkbox_all} checked={isSelectedAll} onChange={selectAllTask} />
           <span>All</span>
         </div>
-        <select name="" id = "" value={filter} onChange={updateFilter}>
+        <select name="filter" id = "filter" value={filter} onChange={updateFilter}>
           <option value="all">All</option>
           <option value="finished">Finished</option>
           <option value="unfinished">Unfinished</option>
