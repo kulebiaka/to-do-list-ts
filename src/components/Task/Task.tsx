@@ -1,6 +1,10 @@
 import React from 'react'
 import s from './Task.module.scss'
 
+type PropsType = {
+
+}
+
 const Task = (props: any) => {
   let task = props.task
 
@@ -8,7 +12,7 @@ const Task = (props: any) => {
     props.changeStatusEdit(props.id)
   }
 
-  function editTaskText(e: any) {
+  function editTaskText(e: React.ChangeEvent<HTMLTextAreaElement>) {
     props.editTaskText(props.id, e.target.value)
   }
 
